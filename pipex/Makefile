@@ -1,9 +1,10 @@
 NAME= pipex
 
 SRC=	  main.c\
-			pipex_func.c\
-			process.c\
-			utils.c
+			utils.c\
+			utils2.c\
+			pipex_functs.c\
+			processes.c\
 
 CC= cc
 

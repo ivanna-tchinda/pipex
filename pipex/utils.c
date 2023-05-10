@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: itchinda <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/05 18:11:05 by itchinda          #+#    #+#             */
+/*   Updated: 2023/04/05 18:11:45 by itchinda         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 size_t	ft_strlen(const char *s)
@@ -9,6 +21,7 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
+
 static char	*ft_malloc(char const *s, unsigned int start, size_t len)
 {
 	char	*s2;
@@ -47,7 +60,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (s2);
 }
 
-
 char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*join;
@@ -70,6 +82,29 @@ char	*ft_strjoin(char *s1, char *s2)
 		j++;
 	}
 	join[i + j] = '\0';
-	free(s2);
 	return (join);
+}
+
+void	ft_allocate(char **s2, char const *s, char c)
+{
+	char	**tab_s2;
+	char	*tmp;
+
+	tmp = (char *)s;
+	tab_s2 = s2;
+	while (*tmp)
+	{
+		while (*s == c)
+			++s;
+		tmp = (char *)s;
+		while (*tmp && *tmp != c)
+			++tmp;
+		if (*tmp == c || tmp > s)
+		{
+			*tab_s2 = ft_substr(s, 0, tmp - s);
+			s = tmp;
+			++tab_s2;
+		}
+	}
+	*tab_s2 = NULL;
 }

@@ -1,0 +1,11 @@
+infile
+main.c
+Makefile
+obj
+outfile
+pipex
+pipex_functs.c
+pipex.h
+processes.c
+utils2.c
+utils.c

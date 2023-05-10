@@ -1,63 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: itchinda <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/05 17:06:20 by itchinda          #+#    #+#             */
+/*   Updated: 2023/04/05 18:04:36 by itchinda         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-int	free_tab(char **tab)
+char	*ft_options(char *av)
 {
 	int	i;
-	char *ptr_tab;
+	int	j;
 
 	i = 0;
-	while (tab[i])
+	j = 0;
+	while (av[i] == ' ')
+		i++;
+	while (av[i] != ' ' && av[i])
+		i++;
+	if (!av[i])
+		return (NULL);
+	while (av[i] == ' ')
+		i++;
+	j = i;
+	while (av[j])
+		j++;
+	return (ft_substr(av, i, j - i));
+}
+
+char	*ft_path(char *av, t_data cmd, char **envp)
+{
+	char	*goodenv;
+	char	*command;
+
+	if (cmd.env1[0] == NULL || cmd.env2[0] == NULL)
+		return (NULL);
+	command = ft_command(av);
+	goodenv = which_envbis(command, envp);
+	if (goodenv == NULL)
+		return (command);
+	free(command);
+	return (goodenv);
+}
+
+int	ft_nboptions(char *av)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	av = ft_options(av);
+	if (!av)
+		return (0);
+	while (av[i])
 	{
-		ptr_tab = tab[i];
-		free(ptr_tab);
+		if (av[i] == ' ' || !av[i + 1])
+			count++;
 		i++;
 	}
-	free(tab);
+	return (count);
+}
+
+int	ft_parse(char **av, t_data cmd)
+{
+	if (!cmd.env1[0])
+		write(2, "env is null\n", 12);
+	else if (access(av[1], 0) == -1)
+		return (write(2, "Infile: no such file or directory\n", 34));
+	else
+		return (0);
 	return (0);
 }
 
-
-
-int	ft_parse(int ac, char **av)
+int	main(int ac, char **av, char *envp[])
 {
+	int			fd[2];
+	t_data		cmd;
+
 	if (ac != 5)
 		return (write(2, "Invalid number of arguments\n", 28));
-	else if (access(av[1], 0) == -1)
-		return(write(2, "Infile: no such file or directory\n", 34));
-	return (0);
-}
-
-int main(int ac, char **av)
-{
-	(void)ac;
-	if (ft_parse(ac, av) != 0)
-		return (1);
-	int fd[3];
-	if (pipe(fd) == -1)
-		return 1;
-
-	int pid1 = fork();
-	if (pid1 == -1)
-		return 1;
-	if (pid1 == 0)
-		ft_pid1(fd, av);
-	int pid2 = fork();
-	if (pid2 == -1)
-		return 1;
-	if (pid2 == 0)
-	{
-		waitpid(pid1, NULL, 0);
-		ft_pid2(fd, av);
-	}
-	int pid3 = fork();
-	if (pid3 == -1)
-		return 1;
-	if (pid3 == 0)
-	{
-		waitpid(pid2, NULL, 0);
-		close(fd[0]);
-		close(fd[1]);
-		close(fd[2]);
-	}
+	cmd.env1 = envp;
+	cmd.env2 = envp;
+	cmd.path1 = ft_path(av[2], cmd, envp);
+	cmd.path2 = ft_path(av[3], cmd, envp);
+	cmd.args1 = ft_split(av[2], ' ');
+	cmd.args2 = ft_split(av[3], ' ');
+	ft_parse(av, cmd);
+	ft_process(fd, cmd, av, envp);
+	free_tab(cmd.args1);
+	free_tab(cmd.args2);
+	free(cmd.path2);
 	return (0);
 }
