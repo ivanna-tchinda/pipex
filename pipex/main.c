@@ -35,11 +35,10 @@ char	*ft_options(char *av)
 
 char	*ft_path(char *av, t_data cmd, char **envp)
 {
+	(void)cmd;
 	char	*goodenv;
 	char	*command;
 
-	if (cmd.env1[0] == NULL || cmd.env2[0] == NULL)
-		return (NULL);
 	command = ft_command(av);
 	goodenv = which_envbis(command, envp);
 	if (goodenv == NULL)
@@ -69,9 +68,8 @@ int	ft_nboptions(char *av)
 
 int	ft_parse(char **av, t_data cmd)
 {
-	if (!cmd.env1[0])
-		write(2, "env is null\n", 12);
-	else if (access(av[1], 0) == -1)
+	(void)cmd;
+	if (access(av[1], 0) == -1)
 		return (write(2, "Infile: no such file or directory\n", 34));
 	else
 		return (0);
